@@ -17,6 +17,7 @@ class Settings(BaseSettings):
     VERSION: str = "0.0.1"
     RAW_DIR: Optional[str] = None  # default relative folder
     PROCESSED_DIR: Optional[str] = None
+    MODEL_DIR: Optional[str] = None
     DEBUG: bool = True
 
     # Database / API
@@ -31,6 +32,10 @@ class Settings(BaseSettings):
     @property
     def PROCESSED_DATA_DIR(self) -> Path:
         return BASE_DIR / self.PROCESSED_DIR
+
+    @property
+    def MODELS_DIR(self) -> Path:
+        return BASE_DIR / self.MODEL_DIR
 
     @property
     def BASE_DIR(self) -> Path:
