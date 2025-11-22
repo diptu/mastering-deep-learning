@@ -1,22 +1,22 @@
 """Full sklearn/Tensorflow preprocessing pipeline."""
 
-import logging
 from pathlib import Path
 
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+
 from app.core.config import settings
+from app.core.logger import get_logger
+from app.inference.encoders.categorical import encode_one_hot
 from app.inference.feature_selection import select_features
 from app.inference.load_data import load_dataset
 
-# Configure basic logging to console
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-# Get a logger instance
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
-def preprocess_pipeline(input_filename: str, output_filename: str):
+def preprocess_pipeline(
+    input_filename: str, output_filename: str, target_col: str = "Exited"
+):
     """
     Load raw dataset → run feature selection → save processed dataset.
 
@@ -24,7 +24,6 @@ def preprocess_pipeline(input_filename: str, output_filename: str):
         input_filename (str): CSV filename inside RAW_DATA_DIR.
         output_filename (str): Output CSV filename saved in PROCESSED_DATA_DIR.
     """
-    target_col = "Exited"
 
     # Build full input file path
     raw_file_path = settings.RAW_DATA_DIR / input_filename
@@ -32,9 +31,17 @@ def preprocess_pipeline(input_filename: str, output_filename: str):
     # Load dataset
     df = load_dataset(raw_file_path)
 
+    drop_cols = ["Surname", "RowNumber", "CustomerId"]  # identifiers
+    df = df.drop(columns=drop_cols)
+
     # Apply feature selection
     processed_df = select_features(df, target_col)
-    print(f"Data after dropping weak features has {processed_df.shape[1]} columns")
+    logger.debug(
+        f"Data after dropping weak features has {processed_df.shape[1]} columns"
+    )
+
+    # one hot Encode categorical feature
+    processed_df = encode_one_hot(processed_df, cols=["Geography", "Gender"])
 
     # Ensure output directory exists
     processed_dir: Path = settings.PROCESSED_DATA_DIR
@@ -44,17 +51,43 @@ def preprocess_pipeline(input_filename: str, output_filename: str):
     processed_file_path = processed_dir / output_filename
     processed_df.to_csv(processed_file_path, index=False)
 
-    print(f"✔ Processed data saved to: {processed_file_path}")
+    logger.info(f"✔ Processed data saved to: {processed_file_path}")
 
     return processed_df
 
 
 if __name__ == "__main__":
+    target_col = "Exited"
     input_data = "churn"
     output_data = f"processed_{input_data}"
 
-    final_df = preprocess_pipeline(
-        input_filename=f"{input_data}.csv", output_filename=f"{output_data}.csv"
-    )
+    # # ----------------
+    # # # EDA
+    # # --------------
+    # path = settings.RAW_DATA_DIR / f"{input_data}.csv"
+    # df = pd.read_csv(path)
 
-    print(final_df.head())
+    # data_analysis(df)
+
+    df = preprocess_pipeline(
+        input_filename=f"{input_data}.csv",
+        output_filename=f"{output_data}.csv",
+        target_col=target_col,
+    )
+    # # ----------------
+    # #Split data
+    # # --------------
+    X = df.drop(columns=[target_col])
+    y = df[target_col]
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
+    # # ----------------
+    # # Standaralize Data
+    # # --------------
+    scaler = StandardScaler()
+
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.fit_transform(X_test)
+    print(X_train_scaled)

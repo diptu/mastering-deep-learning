@@ -32,6 +32,10 @@ class Settings(BaseSettings):
     def PROCESSED_DATA_DIR(self) -> Path:
         return BASE_DIR / self.PROCESSED_DIR
 
+    @property
+    def BASE_DIR(self) -> Path:
+        return BASE_DIR
+
     # Pydantic v2 config
     model_config = SettingsConfigDict(env_file=str(ENV_FILE), extra="ignore")
 
