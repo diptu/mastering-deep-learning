@@ -14,3 +14,9 @@ tasks:
     cmds:
       - PYTHONPATH=. python -m app.utils.download_kaggle_dataset -d {{.DATASET}}
 
+  data-preprocess:
+    desc: "Run preprocessing pipeline"
+    cmds:
+       - PYTHONPATH=. python -m app.inference.preprocess
+
+

@@ -15,7 +15,8 @@ class Settings(BaseSettings):
     APP_NAME: str = "churn prediction"
     APP_ENV: str = "development"
     VERSION: str = "0.0.1"
-    FILE_PATH: Optional[str] = "data"  # default relative folder
+    RAW_DIR: Optional[str] = None  # default relative folder
+    PROCESSED_DIR: Optional[str] = None
     DEBUG: bool = True
 
     # Database / API
@@ -24,8 +25,12 @@ class Settings(BaseSettings):
 
     # Computed property
     @property
-    def DATA_PATH(self) -> Path:
-        return BASE_DIR / self.FILE_PATH
+    def RAW_DATA_DIR(self) -> Path:
+        return BASE_DIR / self.RAW_DIR
+
+    @property
+    def PROCESSED_DATA_DIR(self) -> Path:
+        return BASE_DIR / self.PROCESSED_DIR
 
     # Pydantic v2 config
     model_config = SettingsConfigDict(env_file=str(ENV_FILE), extra="ignore")

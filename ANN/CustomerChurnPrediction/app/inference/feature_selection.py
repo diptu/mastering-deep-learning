@@ -1,3 +1,5 @@
+"""Select Feature"""
+
 import pandas as pd
 
 from app.inference.categorical_features import get_categorical_chi2
