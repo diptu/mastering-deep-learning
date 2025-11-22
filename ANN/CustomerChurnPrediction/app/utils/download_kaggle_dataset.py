@@ -1,50 +1,42 @@
-import argparse
+# app/utils/download_kaggle_dataset.py
 import os
 from pathlib import Path
 
-# Set Kaggle credentials first
 from app.core.config import settings
+from kaggle.api.kaggle_api_extended import KaggleApi
 
 os.environ["KAGGLE_USERNAME"] = settings.USER_NAME
 os.environ["KAGGLE_KEY"] = settings.API_KEY
 
-from kaggle.api.kaggle_api_extended import KaggleApi  # now reads env
 
-
-def download_dataset(dataset: str, file: str = None):
+def download_dataset(dataset_slug: str, target_csv="churn.csv"):
     out_dir = Path(settings.RAW_DATA_DIR)
     out_dir.mkdir(parents=True, exist_ok=True)
 
     api = KaggleApi()
-    api.authenticate()  # reads from env
+    api.authenticate()
 
-    print(f"⬇ Downloading dataset: {dataset} ...")
-    api.dataset_download_files(dataset, path=out_dir, unzip=True)
-    print(f"✔ Dataset downloaded & extracted to: {out_dir}")
+    print(f"⬇ Downloading {dataset_slug} ...")
+    api.dataset_download_files(dataset_slug, path=out_dir, unzip=True)
 
-    # --- Rename CSV to churn.csv ---
+    # Rename first CSV
     csv_files = list(out_dir.glob("*.csv"))
-
     if not csv_files:
-        print("⚠ No CSV files found in the downloaded dataset.")
+        print("⚠ No CSV found!")
         return
 
-    source_file = csv_files[0]  # pick the first CSV
-    target_file = out_dir / file
-
-    # Remove existing churn.csv to avoid conflicts
+    source_file = csv_files[0]
+    target_file = out_dir / target_csv
     if target_file.exists():
         target_file.unlink()
-
     source_file.rename(target_file)
-
-    print(f"✔ Renamed dataset file to: {target_file}")
+    print(f"✔ Dataset ready at {target_file}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Download Kaggle dataset and rename CSV to churn.csv."
-    )
-    parser.add_argument("-d", "--dataset", required=True, help="Kaggle dataset slug")
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-d", "--dataset", required=True)
     args = parser.parse_args()
-    download_dataset(args.dataset, "churn.csv")
+    download_dataset(args.dataset)

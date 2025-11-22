@@ -1,7 +1,5 @@
-"""Full sklearn/Tensorflow preprocessing pipeline."""
-
-from pathlib import Path
-
+# app/inference/preprocessor.py
+import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 
@@ -14,80 +12,47 @@ from app.inference.load_data import load_dataset
 logger = get_logger(__name__)
 
 
-def preprocess_pipeline(
-    input_filename: str, output_filename: str, target_col: str = "Exited"
-):
-    """
-    Load raw dataset → run feature selection → save processed dataset.
+class Preprocessor:
+    def __init__(self, target_col="Exited"):
+        self.target_col = target_col
+        self.scaler = StandardScaler()
 
-    Args:
-        input_filename (str): CSV filename inside RAW_DATA_DIR.
-        output_filename (str): Output CSV filename saved in PROCESSED_DATA_DIR.
-    """
+    def preprocess(self, input_file: str, output_file: str) -> pd.DataFrame:
+        raw_file_path = settings.RAW_DATA_DIR / input_file
+        df = load_dataset(raw_file_path)
 
-    # Build full input file path
-    raw_file_path = settings.RAW_DATA_DIR / input_filename
-    logger.debug(f"raw_file_path: {raw_file_path}")
-    # Load dataset
-    df = load_dataset(raw_file_path)
+        # Drop identifiers
+        drop_cols = ["Surname", "RowNumber", "CustomerId"]
+        df = df.drop(columns=drop_cols)
 
-    drop_cols = ["Surname", "RowNumber", "CustomerId"]  # identifiers
-    df = df.drop(columns=drop_cols)
+        # Feature selection
+        df = select_features(df, self.target_col)
 
-    # Apply feature selection
-    processed_df = select_features(df, target_col)
-    logger.debug(
-        f"Data after dropping weak features has {processed_df.shape[1]} columns"
-    )
+        # Encode categorical features
+        df = encode_one_hot(df, cols=["Geography", "Gender"])
 
-    # one hot Encode categorical feature
-    processed_df = encode_one_hot(processed_df, cols=["Geography", "Gender"])
+        # Save processed data
+        processed_dir = settings.PROCESSED_DATA_DIR
+        processed_dir.mkdir(parents=True, exist_ok=True)
+        processed_path = processed_dir / output_file
+        df.to_csv(processed_path, index=False)
+        logger.info(f"✔ Processed data saved to {processed_path}")
 
-    # Ensure output directory exists
-    processed_dir: Path = settings.PROCESSED_DATA_DIR
-    processed_dir.mkdir(parents=True, exist_ok=True)
+        return df
 
-    # Save processed file
-    processed_file_path = processed_dir / output_filename
-    processed_df.to_csv(processed_file_path, index=False)
-
-    logger.info(f"✔ Processed data saved to: {processed_file_path}")
-
-    return processed_df
+    def split_and_scale(self, df: pd.DataFrame):
+        X = df.drop(columns=[self.target_col])
+        y = df[self.target_col]
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42
+        )
+        X_train_scaled = self.scaler.fit_transform(X_train)
+        X_test_scaled = self.scaler.transform(X_test)
+        return X_train_scaled, X_test_scaled, y_train, y_test
 
 
 if __name__ == "__main__":
-    target_col = "Exited"
-    input_data = "churn"
-    output_data = f"processed_{input_data}"
-
-    # # ----------------
-    # # # EDA
-    # # --------------
-    # path = settings.RAW_DATA_DIR / f"{input_data}.csv"
-    # df = pd.read_csv(path)
-
-    # data_analysis(df)
-
-    df = preprocess_pipeline(
-        input_filename=f"{input_data}.csv",
-        output_filename=f"{output_data}.csv",
-        target_col=target_col,
-    )
-    # # ----------------
-    # #Split data
-    # # --------------
-    X = df.drop(columns=[target_col])
-    y = df[target_col]
-
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42
-    )
-    # # ----------------
-    # # Standaralize Data
-    # # --------------
-    scaler = StandardScaler()
-
-    X_train_scaled = scaler.fit_transform(X_train)
-    X_test_scaled = scaler.fit_transform(X_test)
-    print(X_train_scaled)
+    pre = Preprocessor()
+    df = pre.preprocess("churn.csv", "processed_churn.csv")
+    X_train, X_test, y_train, y_test = pre.split_and_scale(df)
+    print(X_train.shape, X_test.shape)
