@@ -1,8 +1,6 @@
+from app.api.v1.routes.churn import router as churn_router
 from fastapi import FastAPI
 
-app = FastAPI()
+app = FastAPI(title="Customer Churn Prediction API")
 
-
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
+app.include_router(churn_router)

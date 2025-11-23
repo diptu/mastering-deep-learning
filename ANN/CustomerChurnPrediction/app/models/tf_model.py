@@ -1,4 +1,4 @@
-# app/training/train.py
+# app/training/ttf_model.py
 import matplotlib.pyplot as plt
 import numpy as np
 import tensorflow as tf

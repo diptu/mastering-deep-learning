@@ -10,7 +10,7 @@ tasks:
   download-dataset:
     desc: "Download Kaggle dataset"
     vars:
-      DATASET: "rjmanoj/credit-card-customer-churn-prediction" 
+      DATASET: "rjmanoj/credit-card-customer-churn-prediction"
     cmds:
       - PYTHONPATH=. python -m app.utils.download_kaggle_dataset -d {{.DATASET}}
 
@@ -23,4 +23,3 @@ tasks:
     desc: "Run training pipeline"
     cmds:
        - PYTHONPATH=. python -m app.training.train
-

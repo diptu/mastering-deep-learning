@@ -20,6 +20,9 @@ class Settings(BaseSettings):
     MODEL_DIR: Optional[str] = None
     DEBUG: bool = True
 
+    EPOCHS: int = 20
+    BATCH: int = 32
+
     # Database / API
     USER_NAME: Optional[str] = None
     API_KEY: Optional[str] = None
