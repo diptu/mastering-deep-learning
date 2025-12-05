@@ -1,0 +1,25 @@
+version: "3"
+
+tasks:
+  init-project:
+    desc: "Initialize simple DL project structure with starter files"
+    cmds:
+      - mkdir -p app/{models,inference,routes,schemas,utils}
+      - mkdir -p training data/{raw,processed}
+
+  download-dataset:
+    desc: "Download Kaggle dataset"
+    vars:
+      DATASET: "hojjatk/mnist-dataset"
+    cmds:
+      - PYTHONPATH=. python -m app.utils.download_kaggle_dataset -d {{.DATASET}}
+
+  data-preprocess:
+    desc: "Run preprocessing pipeline"
+    cmds:
+       - PYTHONPATH=. python -m app.inference.preprocess
+
+  train:
+    desc: "Run training pipeline"
+    cmds:
+       - PYTHONPATH=. python -m app.training.train
