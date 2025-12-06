@@ -15,7 +15,7 @@ class Predictor:
         Load trained model, scaler, and metadata for inference.
         """
         # Paths
-        model_path = settings.MODELS_DIR / "tf_churn_model.h5"
+        model_path = settings.MODELS_DIR / "tf_digit_classification_model.h5.h5"
         scaler_path = settings.MODELS_DIR / "scaler.pkl"
         meta_path = settings.MODELS_DIR / "meta.pkl"
 

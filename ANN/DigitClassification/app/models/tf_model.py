@@ -1,6 +1,5 @@
 # app/training/ttf_model.py
 import matplotlib.pyplot as plt
-import numpy as np
 import tensorflow as tf
 from app.core.logger import get_logger
 from sklearn.metrics import accuracy_score
@@ -11,12 +10,17 @@ logger = get_logger(__name__)
 def build_model(input_dim):
     model = tf.keras.Sequential(
         [
-            tf.keras.layers.Dense(64, activation="relu", input_dim=input_dim),
+            tf.keras.layers.Flatten(input_shape=input_dim),
+            # tf.keras.layers.Dense(128, activation="relu"),
+            tf.keras.layers.Dense(64, activation="relu"),
             tf.keras.layers.Dense(32, activation="relu"),
-            tf.keras.layers.Dense(1, activation="sigmoid"),
+            tf.keras.layers.Dense(10, activation="softmax"),
         ]
     )
-    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+    loss = tf.keras.losses.SparseCategoricalCrossentropy()
+    # SparseCategoricalCrossentropy : No need for label to onehot encode
+    model.compile(optimizer="adam", loss=loss, metrics=["accuracy"])
+
     return model
 
 
@@ -47,9 +51,10 @@ def plot_accuracy(history):
 
 
 def evaluate_model(model, X_test, y_test):
-    """Run prediction → threshold → accuracy score."""
-    y_log = model.predict(X_test)
-    y_pred = np.where(y_log > 0.5, 1, 0)
+    """Run prediction → highest probability → accuracy score."""
+    y_prob = model.predict(X_test)
+
+    y_pred = y_prob.argmax(axis=1)
 
     accuracy = accuracy_score(y_test, y_pred)
     logger.info(f"✔ Test Accuracy: {accuracy:.4f}")
