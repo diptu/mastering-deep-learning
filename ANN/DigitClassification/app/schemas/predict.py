@@ -1,29 +1,29 @@
-from enum import Enum
+# app/schemas/predict.py
+from typing import List
 
-from pydantic import BaseModel, confloat, conint, validator
-
-
-class GenderEnum(str, Enum):
-    male = "Male"
-    female = "Female"
+from fastapi import File, UploadFile
+from pydantic import BaseModel
 
 
-class GeographyEnum(str, Enum):
-    france = "France"
-    germany = "Germany"
-    spain = "Spain"
+# -----------------------------
+# INPUT SCHEMA
+# -----------------------------
+class DigitPredictRequest(BaseModel):
+    """
+    Request schema for MNIST digit prediction via image file upload.
+    """
+
+    file: UploadFile = File(...)
 
 
-class ChurnRequest(BaseModel):
-    Age: confloat(ge=0)  # Age cannot be negative
-    Balance: confloat(ge=0)  # Balance cannot be negative
-    IsActiveMember: conint(ge=0, le=1)  # Must be 0 or 1
-    Geography: GeographyEnum
-    Gender: GenderEnum
+# -----------------------------
+# RESPONSE SCHEMA
+# -----------------------------
+class DigitPredictResponse(BaseModel):
+    """
+    Response schema for MNIST digit prediction.
+    """
 
-    # Optional extra check (redundant, for clarity)
-    @validator("IsActiveMember")
-    def check_isactive(cls, v):
-        if v not in (0, 1):
-            raise ValueError("IsActiveMember must be 0 or 1")
-        return v
+    prediction: int  # Predicted digit (0-9)
+    probability: float  # Probability/confidence of predicted class
+    probabilities: List[float]  # Probabilities for all 10 classes (0-9)

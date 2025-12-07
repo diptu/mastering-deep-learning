@@ -1,6 +1,10 @@
-import joblib
-import pandas as pd
-import tensorflow
+# app/inference/predictor.py
+from io import BytesIO
+from pathlib import Path
+
+import numpy as np
+import tensorflow as tf
+from PIL import Image
 
 from app.core.config import settings
 from app.core.logger import get_logger
@@ -11,63 +15,45 @@ logger = get_logger(__name__)
 
 class Predictor:
     def __init__(self):
-        """
-        Load trained model, scaler, and metadata for inference.
-        """
-        # Paths
-        model_path = settings.MODELS_DIR / "tf_digit_classification_model.h5.h5"
-        scaler_path = settings.MODELS_DIR / "scaler.pkl"
-        meta_path = settings.MODELS_DIR / "meta.pkl"
-
-        # Load model
+        model_path: Path = settings.MODELS_DIR / "tf_digit_classification_model.h5"
         if not model_path.exists():
             raise FileNotFoundError(f"Model file not found at {model_path}")
-        self.model = tensorflow.keras.models.load_model(model_path)
+        self.model = tf.keras.models.load_model(model_path)
         logger.info(f"✔ Loaded model from {model_path}")
+        self.pre = Preprocessor()
 
-        # Load fitted scaler
-        if not scaler_path.exists():
-            raise FileNotFoundError(f"Scaler file not found at {scaler_path}")
-        self.scaler = joblib.load(scaler_path)
-        logger.info(f"✔ Loaded scaler from {scaler_path}")
-
-        # Load expected features
-        if not meta_path.exists():
-            raise FileNotFoundError(f"Metadata file not found at {meta_path}")
-        meta = joblib.load(meta_path)
-        self.expected_features = meta["expected_features"]
-        logger.info(f"✔ Loaded expected features: {self.expected_features}")
-
-        # Preprocessor instance for encoding
-        self.pre = Preprocessor(target_col="Exited")
-        # Assign the loaded scaler to preprocessor
-        self.pre.scaler = self.scaler
-        self.pre.expected_features = self.expected_features
-
-    # ---------------------------------------------------------
-    # PREDICTION
-    # ---------------------------------------------------------
-    def predict(self, payload: dict) -> dict:
+    # -----------------------------
+    # IMAGE PREPROCESSING
+    # -----------------------------
+    def preprocess_image(self, img: Image.Image) -> np.ndarray:
         """
-        Predict churn probability for a single input row.
-
-        Args:
-            payload (dict): Raw input (from API/Pydantic)
-
-        Returns:
-            dict: {"prediction": 0/1, "probability": float}
+        Convert PIL image → grayscale → 28x28 → flatten → normalize
+        Returns: (1, 784) array ready for model.predict
         """
-        # Convert dict to single-row DataFrame
-        df = pd.DataFrame([payload])
+        img = img.convert("L")  # grayscale
+        img = img.resize((28, 28))
+        arr = np.array(img, dtype=np.float32)
+        arr = arr.reshape(1, -1)  # flatten
+        arr = self.pre.normalize_for_inference(arr)
+        return arr
 
-        # Encode categorical + match training features
-        df_enc = self.pre.encode_for_inference(df)
+    def predict_from_file_bytes(self, image_bytes: bytes) -> dict:
+        """
+        Accept raw image bytes, preprocess, predict digit
+        """
+        try:
+            img = Image.open(BytesIO(image_bytes))
+        except Exception as e:
+            logger.error(f"Failed to open image: {e}")
+            raise ValueError("Invalid image file")
 
-        # Scale using fitted scaler
-        X = self.pre.scale_for_inference(df_enc)
+        X = self.preprocess_image(img)
+        probs = self.model.predict(X, verbose=0).squeeze()
+        pred = int(np.argmax(probs))
+        confidence = float(np.max(probs))
 
-        # Predict probability
-        prob = self.model.predict(X, verbose=0)[0][0]
-        pred = int(prob > 0.5)
-
-        return {"probability": float(prob), "prediction": pred}
+        return {
+            "prediction": pred,
+            "probability": confidence,
+            "probabilities": probs.tolist(),
+        }
