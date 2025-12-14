@@ -1,53 +1,43 @@
 import numpy as np
+from visual import visualize_features
+from activation import ReLU, SoftMax
+from Layers import Dense
 
 
-class DenseLayer:
-    """
-    Represents a single fully connected (Dense) layer in a neural network.
-    """
-
-    def __init__(self, n_inputs, n_neurons):
-        """
-        Initializes weights (randomly) and biases (to zeros).
-
-        :param n_inputs: The number of input features (or neurons from the previous layer).
-        :param n_neurons: The number of neurons in this layer.
-        """
-        self.weights = 0.01 * np.random.randn(n_inputs, n_neurons)
-
-        self.biases = np.zeros((1, n_neurons))
-
-        self.inputs = None
-        self.output = None
-
-    def forward(self, inputs):
-        """
-        Performs the forward pass calculation: output = dot(inputs, weights) + biases.
-
-        :param inputs: A NumPy array of input data/activations.
-                       Shape: (n_samples, n_inputs)
-        :return: The output activation of this layer.
-                 Shape: (n_samples, n_neurons)
-        """
-        self.inputs = inputs
-
-        self.output = np.dot(inputs, self.weights) + self.biases
-
-        return self.output
+def generate_data(n_samples=100, n_features=5, seed=42):
+    np.random.seed(seed)
+    return np.random.randn(n_samples, n_features)
 
 
 def main():
-    X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 8, 7, 6], [5, 4, 3, 2]])
-    np.random.seed(42)
-    layer_1 = DenseLayer(4, 3)
-    layer_2 = DenseLayer(3, 5)
+    # Data
+    X = generate_data(n_samples=100, n_features=3)
+    n_samples, n_features = X.shape
 
-    layer_1_out = layer_1.forward(X)
-    layer_2_out = layer_2.forward(layer_1_out)
-    print("Layer Output:")
-    print(layer_2_out)
+    print("Input Shape:", X.shape)
 
-    print("\nOutput Shape:", layer_2_out.shape)
+    # visualize_features(X)
+
+    # Model config
+    H1_NEURONS = 32
+    H2_NEURONS = 16
+    O_NEURONS = n_features
+    relu = ReLU()
+    soft_max = SoftMax()
+
+    # Layer 1
+    dense_1 = Dense(n_features, H1_NEURONS)
+    z1 = dense_1.forward(X)
+    a1 = relu.forward(z1)
+
+    # Layer 2
+    dense_2 = Dense(H1_NEURONS, H2_NEURONS)
+    z2 = dense_2.forward(a1)
+    a2 = soft_max.forward(z2)
+
+    print("\nSample Output:")
+    print(a2[:5])
+    print("Final Output Shape:", a2.shape)
 
 
 if __name__ == "__main__":
