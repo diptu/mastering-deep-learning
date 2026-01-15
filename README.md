@@ -1,127 +1,72 @@
-# 🚀 Mastering Deep Learning
-- 🎯 Hands-On Deep Learning: From Scratch to Advanced Models
+# 🚀 100 Days of ML: From Foundations to Autonomous Agents
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue?logo=python)  ![FastAPI](https://img.shields.io/badge/FastAPI-Framework-009688?logo=fastapi)  ![PyTorch](https://img.shields.io/badge/PyTorch-Framework-EE4C2C?logo=pytorch)  ![TensorFlow](https://img.shields.io/badge/TensorFlow-Framework-FF6F00?logo=tensorflow)  ![Road to Mastery](https://img.shields.io/badge/Road_to-Mastery-success?logo=github)
+> 🎯 **"Consistency beats intensity."**
 
----
-
-## Table of Contents
-- [Overview](#overview)
-- [Why This Roadmap?](#why-this-roadmap)
-- [Roadmap](#roadmap)
-- [Repository Layout](#layout)
-- [Progress Checklist](#progress-checklist)
-- [Future Extensions](#future-extensions)
-- [Setup Instructions](#setup-instructions)
-
-  
-## Overview
-
-Hands-on journey to **mastering Deep Learning**:
-
-- **Theory + Classic Papers**  
-- **NumPy implementations from scratch**  
-- **PyTorch & TensorFlow practice projects**  
-- **Optional FastAPI deployment**
+> This repository serves as a technical log for my 100-day journey toward mastering Machine Learning. The objective is to transition from a practitioner to an expert by implementing algorithms from scratch, mastering state-of-the-art architectures, and deploying production-ready AI systems.
 
 ---
 
-## Why This Roadmap?
+## 🧭 Roadmap Overview
 
-This roadmap guides learners from **core neural network fundamentals** to **advanced deep learning topics**:
+### Phase 1: Statistical Foundations & Classical ML (Days 1–15)
+*Goal: Master the "why" behind the models. Focus on vectorization and optimization.*
+- **Days 1–5:** Linear/Logistic Regression (Analytical solution vs. Gradient Descent).
+- **Days 6–10:** Tree-based Methods (Entropy, Gini Impurity, Boosting/Bagging logic).
+- **Days 11–15:** Dimensionality Reduction (PCA, t-SNE) and SVMs (Dual/Primal formulations).
 
-- **Theory-first:** Start with **NumPy from scratch** implementations.  
-- **Framework transition:** Move to **PyTorch/TensorFlow** for scalability and real-world projects.  
-- **Hands-on projects:** MNIST, CIFAR, ImageNet, text datasets, and more.  
-- **Comprehensive coverage:** ANN → Computer Vision → RNN → NLP/LLM → GAN → RL → AI Agents.
+### Phase 2: ANN Mastery (Days 16–30)
+*Goal: Building the "Brain." Understanding backpropagation and gradient flow.*
+- **Days 16–22:** Multi-Layer Perceptron (MLP) from scratch using NumPy.
+- **Days 23–27:** Activation functions, Weight Init (Xavier/He), and Normalization (Batch vs. Layer).
+- **Days 28–30:** Advanced Optimizers (RMSProp, Adam, AdamW).
 
----
+### Phase 3: CNN & Computer Vision (Days 31–45)
+*Goal: Spatial feature extraction and modern CV pipelines.*
+- **Days 31–37:** Convolutional layers, Pooling, and Residual Connections (ResNet).
+- **Days 38–42:** Object Detection (YOLO/Faster R-CNN) and Segmentation (U-Net).
+- **Days 43–45:** Vision Transformers (ViT) and Transfer Learning.
 
-## Layout
 
-```
-mastering_deep_learning/
-│── pyproject.toml        # UV package manager config
-│── README.md             # Overview & roadmap
-│── LICENSE
-│── requirements.txt
-│── src/                  # Core modules
-│   ├── ann/
-│   ├── cv/
-│   ├── rnn/
-│   ├── nlp/
-│   ├── gan/
-│   └── rl/
-│── projects/             # Practice projects
-│   ├── mnist.py
-│   ├── fashion_mnist.py
-│   └── custom_dataset.py
-│── notebooks/            # Optional weekly notebooks
-│── data/                 # Datasets
-│── papers/               # Classic papers per week
-```
 
----
+### Phase 4: NLP & Sequence Modeling (Days 46–60)
+*Goal: Understanding context and the Attention mechanism.*
+- **Days 46–52:** RNNs, LSTMs, and GRUs (handling long-range dependencies).
+- **Days 53–60:** The Transformer Architecture (Self-Attention, Multi-head attention, Positional Encoding).
 
-## Roadmap
 
-| 📅 Week | Phase | Focus | Project / Dataset | Framework | Paper / Reference | Resources / Blogs |
-|------|-------|-------|-----------------|----------|-----------------|-----------------|
-| 1 | ![ANN](https://img.shields.io/badge/ANN-FF6F61?logo=brain) | Neurons, Activations, Loss, Forward Pass | MNIST | NumPy | [McCulloch & Pitts, 1943](https://www.cse.chalmers.se/~coquand/AUTOMATA/mcp.pdf) | [Lil's log](https://lilianweng.github.io/posts/2017-06-21-overview/), [Nielsen Book](http://neuralnetworksanddeeplearning.com/) |
-| 2 | ![ANN](https://img.shields.io/badge/ANN-FF6F61?logo=brain) | Backpropagation & Gradient Descent | MNIST | NumPy, PyTorch | [Rumelhart et al., 1986](https://www.nature.com/articles/323533a0) | [Colah Backprop](http://colah.github.io/posts/2015-09-Backprop/), [Karpathy Recipe](http://karpathy.github.io/2019/04/25/recipe/) |
-| 3 | ![ANN](https://img.shields.io/badge/ANN-FF6F61?logo=brain) | Optimizers, Regularization, BatchNorm | Fashion-MNIST | PyTorch, TensorFlow | [Dropout, 2014](https://www.cs.toronto.edu/~hinton/absps/JMLRdropout.pdf) | [CS231n – Regularization](http://cs231n.stanford.edu/notes2021/notes2021.pdf) |
-| 4 | ![ANN](https://img.shields.io/badge/ANN-FF6F61?logo=brain) | Hyperparameter Tuning, Debugging, Metrics | Fashion-MNIST + Custom | PyTorch, TensorFlow | [BatchNorm, 2015](https://arxiv.org/abs/1502.03167) | [BatchNorm Blog](https://towardsdatascience.com/batch-normalization-in-neural-networks-1ac91516821c) |
-| 5-12 | ![CV](https://img.shields.io/badge/Computer_Vision-007acc?logo=opencv) | Convolutions, Pooling, CNN Architecture, Transfer Learning, Object Detection (YOLO/PASCAL VOC) | MNIST, Fashion-MNIST, CIFAR-10, ImageNet | PyTorch, TensorFlow | [LeCun, 1998], [Krizhevsky, 2012], [Redmon, 2016] | [CS231n](http://cs231n.stanford.edu/), [YOLO Blog](https://pjreddie.com/darknet/yolo/) |
-| 13-14 | ![RNN](https://img.shields.io/badge/Sequence_Modeling-7B68EE?logo=python) | RNN, LSTM, GRU, Backprop Through Time | Time Series / Text | PyTorch | [Hochreiter & Schmidhuber, 1997], [Mikolov, 2010] | [Colah LSTM](http://colah.github.io/posts/2015-08-Understanding-LSTMs/), [Karpathy RNN Blog](http://karpathy.github.io/2015/05/21/rnn-effectiveness/) |
-| 15-16 | ![NLP](https://img.shields.io/badge/NLP-FF4500?logo=huggingface) | Transformers, BERT, GPT / LLM Fine-tuning | IMDB / Custom | PyTorch, TensorFlow | [Vaswani, 2017], [Radford, 2019] | [Illustrated Transformer](http://jalammar.github.io/illustrated-transformer/), [Hugging Face Course](https://huggingface.co/course/chapter1) |
-| 17-18 | ![GAN](https://img.shields.io/badge/GAN-800080?logo=tensorflow) | GAN Basics, DCGAN / Conditional GAN | MNIST / CIFAR-10 | PyTorch | [Goodfellow, 2014], [Radford, 2015] | [PyTorch GAN Tutorial](https://pytorch.org/tutorials/beginner/dcgan_faces_tutorial.html) |
-| 19-20 | ![RL](https://img.shields.io/badge/Reinforcement_Learning-32CD32?logo=python) | RL Basics – Q-Learning, Policy Gradients, DQN, Actor-Critic | OpenAI Gym / Atari | PyTorch | [Sutton & Barto, 2018], [Mnih, 2015] | [Deep RL Bootcamp](https://sites.google.com/view/deep-rl-bootcamp) |
+
+### Phase 5: LLM Mastery (Days 61–80)
+*Goal: Large-scale language modeling and fine-tuning.*
+- **Days 61–70:** Tokenization, Pre-training strategies, and Prompt Engineering.
+- **Days 71–80:** Fine-tuning (LoRA, QLoRA) and Alignment (RLHF, DPO).
+
+### Phase 6: GANs & Generative AI (Days 81–90)
+*Goal: Mastering the distribution of data.*
+- **Days 81–85:** DCGANs and WGANs (stability and loss landscapes).
+- **Days 86–90:** Diffusion Models (Introduction to denoising and latent spaces).
+
+### Phase 7: AI Agents & Systems (Days 91–100)
+*Goal: Moving from models to autonomous systems.*
+- **Days 91–95:** Agentic Frameworks (ReAct, Chain of Thought, Tool-use).
+- **Days 96–100:** RAG (Retrieval-Augmented Generation) and Multi-Agent Orchestration.
 
 ---
 
-## Progress Checklist
+## 🛠 Tech Stack
+- **Languages:** Python (Mastering NumPy, Pandas)
+- **Frameworks:** PyTorch (Primary), JAX (Research), FastAPI (Serving)
+- **Infrastructure:** Docker, Weights & Biases (Experiment Tracking)
+- **Vector DBs:** ChromaDB / Pinecone
 
-![ANN](https://img.shields.io/badge/ANN-Phase-FF6F61?logo=brain)  
-- [ ] Weeks 1-4: ANN Fundamentals & NumPy / PyTorch / TensorFlow practice  
-
-![CV](https://img.shields.io/badge/Computer_Vision-007ACC?logo=opencv)  
-- [ ] Weeks 5-12: CNN, Transfer Learning, Object Detection, ImageNet / YOLO  
-
-![RNN](https://img.shields.io/badge/Sequence_Modeling-7B68EE?logo=python)  
-- [ ] Weeks 13-14: RNN / LSTM / GRU sequence modeling  
-
-![NLP](https://img.shields.io/badge/NLP-FF4500?logo=huggingface)  
-- [ ] Weeks 15-16: Transformers / LLM  
-
-![GAN](https://img.shields.io/badge/GAN-800080?logo=tensorflow)  
-- [ ] Weeks 17-18: GAN / DCGAN  
-
-![RL](https://img.shields.io/badge/Reinforcement_Learning-32CD32?logo=python)  
-- [ ] Weeks 19-20: Reinforcement Learning (Q-Learning, DQN, Actor-Critic)
+## 📊 Progress Tracking
+| Day | Topic | Status | Notes |
+|:---:|:---|:---:|:---|
+| 001 | Linear Regression Scratch | ✅ | Implemented Batch GD |
+| 002 | Logistic Regression | 🚧 | Debugging cross-entropy loss |
 
 ---
 
-## Future Extensions
-
-- Advanced CNN architectures (ResNet, DenseNet, EfficientNet)  
-- Transformer-based models & fine-tuning LLMs  
-- GAN variants (StyleGAN, CycleGAN)  
-- RL algorithms (PPO, A3C, Multi-agent systems)  
-- AI Agents for decision-making & environment simulation  
-- FastAPI + Docker deployment + CI/CD pipelines
-
----
-
-## Setup Instructions
-
-```bash
-# Clone repo
-git clone https://github.com/diptu/mastering-deep-learning.git
-cd mastering-deep-learning
-
-# Install with UV package manager
-uv add
-
-# OR install dependencies with pip
-pip install -r requirements.txt
-```
+## 📈 Learning Principles
+1. **First Principles:** If I can't build it from scratch, I don't understand it.
+2. **Production-Grade:** No "spaghetti code." modular design, type hinting, and unit tests.
+3. **Documentation:** Log daily.
