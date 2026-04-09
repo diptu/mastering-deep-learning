@@ -1,4 +1,4 @@
-## Phase 2: Deep Learning Foundations & CNNs (Days 1–10)
+## Phase 2: Deep Learning Foundations & CNNs (Days 1–15)
 
 ## Overview
 This week transitions from "black box" library usage to mastering the mathematical mechanics of spatial hierarchies. You will build a Convolutional Neural Network from the ground up, focusing on tensor operations, backpropagation through spatial layers, and the optimization algorithms that power them.
@@ -164,3 +164,83 @@ This week bridges the gap between your "from scratch" NumPy foundations and indu
 - **Framework:** `PyTorch` (Core focus).
 - **Hardware:** Access to a GPU (Google Colab/Kaggle) is highly recommended for VGG training.
 - **Key Concept:** Architectural modularity—learning to think in "Blocks" rather than individual layers.
+
+
+## Phase 3: Residual Learning & Deep Optimization (Days 11–15)
+
+## Overview
+This week addresses the "Degradation Problem" where deeper networks perform worse than shallower ones. You will master ResNet, the architecture that made training 100+ layer networks possible, and explore the advanced optimization techniques that define state-of-the-art computer vision.
+
+---
+
+## Day 11: The Residual Block (Identity Mapping)
+*Goal: Understand the skip connection that revolutionized deep learning.*
+
+- **Topics:**
+    - **The Degradation Problem:** Why simply adding more layers increases training error.
+    - **Residual Learning:** Learning the mapping $\mathcal{F}(x) = H(x) - x$ instead of the original $H(x)$.
+    - **Identity Shortcuts:** How skip connections allow gradients to flow unimpeded through hundreds of layers.
+- **Mastery Task:**
+    - Implement a basic `ResidualBlock` in PyTorch.
+    - **Challenge:** Handle the dimension mismatch when the stride is $> 1$ using $1 \times 1$ convolutions in the shortcut path.
+
+
+
+---
+
+## Day 12: ResNet-34 & ResNet-50 (Bottleneck Layers)
+*Goal: Implement scalable architectures for complex datasets.*
+
+- **Topics:**
+    - **Basic vs. Bottleneck Blocks:** Why $1 \times 1 \rightarrow 3 \times 3 \rightarrow 1 \times 1$ structures are used for deeper variants (ResNet-50, 101, 152).
+    - **Global Average Pooling (GAP):** Replacing massive Fully Connected layers to reduce parameter count and prevent overfitting.
+- **Mastery Task:**
+    - Implement the **ResNet-50** architecture using the bottleneck pattern.
+    - Compare the parameter count and training stability of ResNet-50 against VGG-19.
+
+
+
+---
+
+## Day 13: Advanced Backprop - Vanishing Gradients & Gradients Flow
+*Goal: Mathematically verify why ResNet solves the gradient problem.*
+
+- **Topics:**
+    - **The Gradient Highway:** Deriving $\frac{\partial \mathcal{L}}{\partial x_l} = \frac{\partial \mathcal{L}}{\partial x_L} (1 + \frac{\partial}{\partial x_l} \sum_{i=l}^{L-1} \mathcal{F}(x_i, W_i))$.
+    - **Effective Depth:** Understanding how ResNet behaves like an ensemble of shallower networks.
+- **Mastery Task:**
+    - Use PyTorch hooks to visualize the gradient norms across layers in a standard CNN vs. a ResNet during training.
+    - Observe the "gradient smoothing" effect provided by skip connections.
+
+---
+
+## Day 14: Regularization & Data Augmentation (Albumentations)
+*Goal: Train deep models like ResNet on limited data without overfitting.*
+
+- **Topics:**
+    - **Advanced Augmentation:** Mixup, CutMix, and AutoAugment.
+    - **Weight Decay vs. $L_2$:** The subtle differences in adaptive optimizers like AdamW.
+    - **Label Smoothing:** Softening target distributions to improve generalization.
+- **Mastery Task:**
+    - Integrate the `Albumentations` library into your PyTorch DataLoader.
+    - Implement a training script that utilizes **Mixup** augmentation and observe its impact on ResNet-18 validation accuracy.
+
+---
+
+## Day 15: Transfer Learning & Fine-Tuning
+*Goal: Apply massive pre-trained models to niche downstream tasks.*
+
+- **Topics:**
+    - **Feature Extraction vs. Fine-Tuning:** Deciding which layers to freeze based on dataset similarity.
+    - **Discriminative Learning Rates:** Using different $\eta$ for the backbone vs. the new head.
+- **Mastery Task:**
+    - Load a pre-trained **ResNet-50** (ImageNet weights).
+    - Replace the final layer for a new task (e.g., Cat vs. Dog or Medical Imaging).
+    - **Comparison:** Train the model with frozen vs. unfrozen weights and document the convergence speed.
+
+---
+
+## Technical Stack for the Week
+- **Language:** Python 3.10+
+- **Libraries:** `PyTorch`, `Torchvision`, `Albumentations`.
+- **Key Concept:** **Residual Learning**—understanding that the easiest thing for a network to learn should be the identity function.

@@ -1,0 +1,85 @@
+version: '3'
+
+vars:
+  PROJECT_NAME: cnn-from-scratch
+
+tasks:
+  default:
+    desc: Create full CNN project structure
+    cmds:
+      - task: create_root
+      - task: create_data
+      - task: create_models
+      - task: create_notebooks
+      - task: create_src
+      - task: create_tests
+      - task: create_scripts
+      - task: create_root_files
+
+  create_root:
+    cmds:
+      - mkdir -p {{.PROJECT_NAME}}
+
+  create_data:
+    cmds:
+      - mkdir -p {{.PROJECT_NAME}}/data/mnist
+
+  create_models:
+    cmds:
+      - mkdir -p {{.PROJECT_NAME}}/models
+      - touch {{.PROJECT_NAME}}/models/lenet5_v1.pkl
+      - touch {{.PROJECT_NAME}}/models/custom_cnn_v1.pkl
+
+  create_notebooks:
+    cmds:
+      - mkdir -p {{.PROJECT_NAME}}/notebooks
+      - touch {{.PROJECT_NAME}}/notebooks/research_viz.ipynb
+
+  create_src:
+    cmds:
+      - mkdir -p {{.PROJECT_NAME}}/src/engine
+      - mkdir -p {{.PROJECT_NAME}}/src/architectures
+      - mkdir -p {{.PROJECT_NAME}}/src/utils
+
+      - touch {{.PROJECT_NAME}}/src/engine/__init__.py
+      - touch {{.PROJECT_NAME}}/src/engine/layers.py
+      - touch {{.PROJECT_NAME}}/src/engine/activations.py
+      - touch {{.PROJECT_NAME}}/src/engine/loss.py
+      - touch {{.PROJECT_NAME}}/src/engine/optimizer.py
+
+      - touch {{.PROJECT_NAME}}/src/architectures/__init__.py
+      - touch {{.PROJECT_NAME}}/src/architectures/lenet5.py
+      - touch {{.PROJECT_NAME}}/src/architectures/vgg.py
+
+      - touch {{.PROJECT_NAME}}/src/utils/dataloader.py
+      - touch {{.PROJECT_NAME}}/src/utils/metrics.py
+
+  create_tests:
+    cmds:
+      - mkdir -p {{.PROJECT_NAME}}/tests
+      - touch {{.PROJECT_NAME}}/tests/test_layers.py
+
+  create_scripts:
+    cmds:
+      - mkdir -p {{.PROJECT_NAME}}/scripts
+      - touch {{.PROJECT_NAME}}/scripts/train_lenet.py
+      - touch {{.PROJECT_NAME}}/scripts/eval_model.py
+
+  create_root_files:
+    cmds:
+      - touch {{.PROJECT_NAME}}/requirements.txt
+      - touch {{.PROJECT_NAME}}/.gitignore
+      - touch {{.PROJECT_NAME}}/README.md
+
+      - echo "numpy" > {{.PROJECT_NAME}}/requirements.txt
+      - echo "matplotlib" >> {{.PROJECT_NAME}}/requirements.txt
+
+      - echo "__pycache__/" > {{.PROJECT_NAME}}/.gitignore
+      - echo "*.pyc" >> {{.PROJECT_NAME}}/.gitignore
+      - echo ".env" >> {{.PROJECT_NAME}}/.gitignore
+      - echo "data/" >> {{.PROJECT_NAME}}/.gitignore
+      - echo "models/" >> {{.PROJECT_NAME}}/.gitignore
+
+      - echo "# CNN From Scratch" > {{.PROJECT_NAME}}/README.md
+      - echo "" >> {{.PROJECT_NAME}}/README.md
+      - echo "A modular deep learning framework built from scratch using NumPy." >> {{.PROJECT_NAME}}/README.md
